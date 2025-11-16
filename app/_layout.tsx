@@ -8,6 +8,7 @@ import { UserProvider } from '../userContext';
 import HomeScreen from './home';
 import LoginScreen from './login';
 import ProfileScreen from './profile';
+import SignupScreen from './signup';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -18,6 +19,7 @@ function HomeStack() {
     <Stack.Navigator initialRouteName="Home">
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Signup" component={SignupScreen} />
     </Stack.Navigator>
   );
 }
