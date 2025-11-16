@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
-import { UserProvider } from './userContext';
+import { UserProvider } from '../userContext';
 import HomeScreen from './home';
 import LoginScreen from './login';
 import ProfileScreen from './profile';
