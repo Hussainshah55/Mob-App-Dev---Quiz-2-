@@ -1,31 +1,44 @@
+
 import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
-import { UserContext } from './userContext';
+import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { UserContext } from '../userContext';
 
 export default function LoginScreen({ navigation }) {
     const { setEmail } = useContext(UserContext);
+
     const [email, setEmailLocal] = useState('');
     const [password, setPassword] = useState('');
 
+    const [errors, setErrors] = useState({
+        email: '',
+        password: '',
+    });
+
     const handleLogin = () => {
-        if (!email || !password) {
-            Alert.alert('Error', 'Please enter email and password');
-            return;
+        let newErrors = { email: '', password: '' };
+        let valid = true;
+
+        // Email validation
+        if (!email.includes('@') || !email.includes('.com')) {
+            newErrors.email = 'Email must contain @ and .com';
+            valid = false;
         }
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            Alert.alert('Error', 'Please enter a valid email');
-            return;
+
+        // Password validation
+        if (password.length < 6) {
+            newErrors.password = 'Password must be at least 6 characters';
+            valid = false;
         }
-        if (password.length < 4) {
-            Alert.alert('Error', 'Password must be at least 4 characters');
-            return;
-        }
+
+        setErrors(newErrors); // <-- IMPORTANT: this re-renders and shows errors
+
+        if (!valid) return;
 
         // Save email in context
         setEmail(email);
-        // Navigate to Profile tab
-        navigation.navigate('ProfileTab');
+
+        // Navigate with params
+        navigation.navigate('ProfileTab', { userEmail: email });
     };
 
     return (
@@ -39,6 +52,10 @@ export default function LoginScreen({ navigation }) {
                 keyboardType="email-address"
                 autoCapitalize="none"
             />
+
+            {/* Email Error */}
+            {errors.email !== '' && <Text style={styles.error}>{errors.email}</Text>}
+
             <Text style={styles.label}>Password:</Text>
             <TextInput
                 placeholder="Enter password"
@@ -47,13 +64,36 @@ export default function LoginScreen({ navigation }) {
                 secureTextEntry
                 style={styles.input}
             />
+
+            {/* Password Error */}
+            {errors.password !== '' && <Text style={styles.error}>{errors.password}</Text>}
+
             <Button title="Login" onPress={handleLogin} />
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, justifyContent: 'center', padding: 20 },
-    label: { fontSize: 16, marginVertical: 5 },
-    input: { borderWidth: 1, borderColor: '#999', borderRadius: 5, padding: 10, marginBottom: 15 },
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        padding: 20,
+    },
+    label: {
+        fontSize: 16,
+        marginVertical: 5,
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: '#999',
+        borderRadius: 5,
+        padding: 10,
+        marginBottom: 5,
+    },
+    error: {
+        color: 'red',
+        marginBottom: 10,
+        marginLeft: 2,
+        fontSize: 14,
+    },
 });
