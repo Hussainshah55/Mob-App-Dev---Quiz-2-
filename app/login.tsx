@@ -1,64 +1,59 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import React, { useState, useContext } from 'react';
+import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import { UserContext } from './userContext';
 
 export default function LoginScreen({ navigation }) {
-    const [email, setEmail] = useState('');
+    const { setEmail } = useContext(UserContext);
+    const [email, setEmailLocal] = useState('');
     const [password, setPassword] = useState('');
 
     const handleLogin = () => {
-        if (!email.includes('@')) {
-            Alert.alert("Invalid Email", "Please enter a valid email.");
+        if (!email || !password) {
+            Alert.alert('Error', 'Please enter email and password');
             return;
         }
-
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            Alert.alert('Error', 'Please enter a valid email');
+            return;
+        }
         if (password.length < 4) {
-            Alert.alert("Invalid Password", "Password must be at least 4 characters.");
+            Alert.alert('Error', 'Password must be at least 4 characters');
             return;
         }
 
-        navigation.navigate('Profile', { email: email });
+        // Save email in context
+        setEmail(email);
+        // Navigate to Profile tab
+        navigation.navigate('ProfileTab');
     };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Login</Text>
-
+            <Text style={styles.label}>Email:</Text>
             <TextInput
-                placeholder="Email"
+                placeholder="Enter email"
                 value={email}
-                onChangeText={setEmail}
+                onChangeText={setEmailLocal}
                 style={styles.input}
+                keyboardType="email-address"
+                autoCapitalize="none"
             />
-
+            <Text style={styles.label}>Password:</Text>
             <TextInput
-                placeholder="Password"
-                secureTextEntry
+                placeholder="Enter password"
                 value={password}
                 onChangeText={setPassword}
+                secureTextEntry
                 style={styles.input}
             />
-
             <Button title="Login" onPress={handleLogin} />
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        padding: 20,
-    },
-    title: {
-        fontSize: 26,
-        marginBottom: 20,
-        textAlign: 'center',
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#aaa',
-        padding: 10,
-        marginBottom: 15,
-        borderRadius: 5,
-    },
+    container: { flex: 1, justifyContent: 'center', padding: 20 },
+    label: { fontSize: 16, marginVertical: 5 },
+    input: { borderWidth: 1, borderColor: '#999', borderRadius: 5, padding: 10, marginBottom: 15 },
 });

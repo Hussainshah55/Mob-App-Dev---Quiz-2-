@@ -1,8 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-
+import { useContext } from 'react';
+import { UserContext } from './userContext';
 export default function ProfileScreen({ route }) {
-    const { email } = route.params;
+
+    const { email } = useContext(UserContext);
 
     return (
         <View style={styles.container}>
